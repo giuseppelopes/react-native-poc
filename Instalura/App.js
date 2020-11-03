@@ -1,14 +1,34 @@
-import React, {Fragment} from 'react';
-import {Text, Image, ScrollView} from 'react-native';
+import React, {Fragment, useState, useEffect} from 'react';
+import {FlatList} from 'react-native';
+import lerFotos from './src/api/feed';
+
+import {Cabecalho} from './src/components/Cabecalho';
+import {Foto} from './src/components/Foto';
+import {Comentarios} from './src/components/Comentarios';
 
 const App = () => {
+  const [fotos, setFotos] = useState([]);
+
+  useEffect(() => {
+    lerFotos(setFotos);
+  }, []);
+
   return (
-    <ScrollView>
-      <Text>Giuseppe Lopes</Text>
-      <Image source={require("./res/img/alura.jpg")} />
-      <Text>Ana Braun Lopes</Text>
-      <Image source={require("./res/img/alura.jpg")} />
-    </ScrollView>
+    <FlatList
+      data={fotos}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({item}) => (
+        <Fragment>
+          <Cabecalho nomeUsuario={item.userName} urlImage={item.userURL} />
+          <Foto
+            urlFoto={item.url}
+            descricao={item.description}
+            qntLikes={item.likes}
+          />
+          <Comentarios comentarios={item.comentarios} />
+        </Fragment>
+      )}
+    />
   );
 };
 
